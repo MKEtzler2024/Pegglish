@@ -5,6 +5,7 @@ import math as math
 
 screen= t.Screen()
 has_won = False
+can_click = True
 
 class ScoreBoard(t.Turtle):
     def __init__(self):
@@ -104,9 +105,10 @@ def move_projectile(clickX, clickY):
 
 
 def clicking(x, y):
-    if not Projectile.projs:
-        Projectile()
-        move_projectile(x, y)
+    if can_click:
+        if not Projectile.projs:
+            Projectile()
+            move_projectile(x, y)
 class Square(t.Turtle):
     def __init__(self, x, y, color, score):
         super().__init__()
@@ -126,6 +128,8 @@ s4 = Square(300, -350, "#204080", 100)
 squares = [s1, s2, s3, s4]
 
 def Win_screen():
+    global can_click
+    can_click = False
     for square in squares:
         square.showturtle()
 
