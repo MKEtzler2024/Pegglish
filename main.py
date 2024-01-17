@@ -20,8 +20,23 @@ class ScoreBoard(t.Turtle):
         self.clear()
         self.write("Score:" + str(self.score), align="center", font=('Arial', 24, 'normal'))
 Score = ScoreBoard()
-
-
+class balls_left(t.Turtle):
+    def __init__(self):
+        super().__init__()
+        self.color("Red")
+        self.penup()
+        self.hideturtle()
+        self.goto(0,320)
+        self.score = 10
+        self.update_balls()
+    def update_balls(self):
+        global can_click
+        if self.score <=1:
+            can_click = False
+        self.score -=1
+        self.clear()
+        self.write("Balls Left:" + str(self.score), align="center", font=('Arial', 24, 'normal'))
+ballsLeft = balls_left()
 class Projectile(t.Turtle):
     projs = []
     def __init__(self):
@@ -31,7 +46,7 @@ class Projectile(t.Turtle):
         self.shape("circle")
         self.shapesize(2,2)
         self.fillcolor("#202080")
-        self.dist = 1
+        self.dist = 2
         self.steps = 50000
         Projectile.projs.append(self)
     def destroy_proj(self):
@@ -83,6 +98,7 @@ def move_projectile(clickX, clickY):
     for proj in Projectile.projs:
         global orb
         global Score
+        global ballsLeft
         angle = proj.towards(clickX, clickY)
         proj.setheading(angle)
         for _ in range(proj.steps):
@@ -90,6 +106,7 @@ def move_projectile(clickX, clickY):
             if proj.ycor() > 401:
                 proj.setheading((-proj.heading())+5)
             if proj.ycor() <= -415:
+                balls_left.update_balls(ballsLeft)
                 Projectile.destroy_proj(proj)
                 return
             proj.forward(proj.dist)
