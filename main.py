@@ -26,8 +26,8 @@ class balls_left(t.Turtle):
         self.color("Red")
         self.penup()
         self.hideturtle()
-        self.goto(0,320)
-        self.score = 10
+        self.goto(-200,350)
+        self.score = 11
         self.update_balls()
     def update_balls(self):
         global can_click
@@ -37,6 +37,20 @@ class balls_left(t.Turtle):
         self.clear()
         self.write("Balls Left:" + str(self.score), align="center", font=('Arial', 24, 'normal'))
 ballsLeft = balls_left()
+class round(t.Turtle):
+    def __init__(self):
+        super().__init__()
+        self.color("Red")
+        self.penup()
+        self.hideturtle()
+        self.goto(200,350)
+        self.score = 0
+        self.update_round()
+    def update_round(self):
+        self.score +=1
+        self.clear()
+        self.write("round #:" + str(self.score), align="center", font=('Arial', 24, 'normal'))
+Round = round()
 class Projectile(t.Turtle):
     projs = []
     def __init__(self):
@@ -46,8 +60,7 @@ class Projectile(t.Turtle):
         self.shape("circle")
         self.shapesize(2,2)
         self.fillcolor("#202080")
-        self.dist = 2
-        self.steps = 50000
+        self.speed(1)
         Projectile.projs.append(self)
     def destroy_proj(self):
         Projectile.projs.remove(self)
@@ -101,22 +114,22 @@ def move_projectile(clickX, clickY):
         global ballsLeft
         angle = proj.towards(clickX, clickY)
         proj.setheading(angle)
-        for _ in range(proj.steps):
+        while True:
             Projectile.check_win(proj)
             if proj.ycor() > 401:
-                proj.setheading((-proj.heading())+5)
+                proj.setheading((-proj.heading())-30)
             if proj.ycor() <= -415:
                 balls_left.update_balls(ballsLeft)
                 Projectile.destroy_proj(proj)
                 return
-            proj.forward(proj.dist)
+            proj.forward(proj.speed())
             for orb in Orb.orbs:
                 if proj.distance(orb) < 25:
                     Orb.Hit_Orb(proj)
                     print(len(Orb.orbs))
                     break
-            if proj.xcor() > 390 or proj.xcor() < -390:
-                proj.setheading((180 - proj.heading())+5)
+            if proj.xcor() > 380 or proj.xcor() < -380:
+                proj.setheading((180 - proj.heading())+30)
 
             t.update()
 
@@ -149,6 +162,7 @@ def Win_screen():
     can_click = False
     for square in squares:
         square.showturtle()
+    Restart()
 
 
 
@@ -158,6 +172,18 @@ def Start():
     screen.bgcolor("#206020")
     screen.tracer(0)
     Spawn_orbs()
+
+def Restart():
+    ballsLeft.score = 11
+    global has_won
+    global can_click
+    has_won = False
+    can_click = True
+    for square in squares:
+        square.hideturtle()
+    Spawn_orbs()
+    Round.update_round()
+
 
 Start()
 while True:
